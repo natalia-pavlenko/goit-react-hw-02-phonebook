@@ -1,23 +1,9 @@
-// export const App = () => {
-//   return (
-//     <div
-//       style={{
-//         height: '100vh',
-//         display: 'flex',
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//         fontSize: 40,
-//         color: '#010101'
-//       }}
-//     >
-//       React homework template
-//     </div>
-//   );
-// };
-
 import React, { Component } from 'react';
 import { nanoid } from 'nanoid';
-// model.id = nanoid()
+import ContactForm from 'components/ContactForm/ContactForm';
+import ContactsList from 'components/ContactsList/ContactsList';
+import Filter from 'components/Filter/Filter';
+
 export class App extends Component {
   state = {
     contacts: [
@@ -27,72 +13,60 @@ export class App extends Component {
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
     filter: '',
-    name: '',
-    number: '',
-  };
-  handleChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
   };
 
-  handleSubmit = event => {
-    event.preventDefault();
-    this.setState({ name: '', number: '' });
-  };
-
-  hendelDelete = (id) => {  this.setState( prevState => {
-    const newContactsList = prevState.contacts.filter(contact => contact.id !== id);
-    return { contacts: newContactsList};
-  }) 
- 
-  };
-   
-  render() {
-    const { name, number, contacts } = this.state;
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <div>
-          <label htmlFor="name">
-            <p>Name</p>
-            <input
-              id="name"
-              type="text"
-              name="name"
-              value={name}
-              pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-              title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-              required
-              onChange={this.handleChange}
-            />
-          </label>
-        </div>
-
-        <div>
-          <label htmlFor="number">
-            <p> Number</p>
-            <input
-              id="number"
-              type="tel"
-              name="number"
-              value={number}
-              pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-              title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-              required
-              onChange={this.handleChange}
-            />
-          </label>
-        </div>
-        <button type="submit">Add contact</button>
-      </form>
+  handleSubmit = ({ name, number, id }) => {
+    const contact = {
+      name: name,
+      number: number,
+      id: nanoid(),
+    };
+    console.log(contact);
+    const existingUser = this.state.contacts.find(
+      user => user.name === contact.name
     );
+    if (existingUser) {
+      alert(`${contact.name}is alredy in contacts`);
+      return;
+    }
 
-    <div>
-      <p>Contacts</p>
-      <label>Fined contacts by name</label>
-      <input type="name" name="name" id="contacts.id" />
-      <button type="button"> Name </button>
-    </div>;
+    this.setState(prevState => ({
+      contacts: [contact, ...prevState.contacts],
+    }));
+  };
 
+  handelFilterInput = event => {
+    const { value } = event.target;
+    this.setState({ filter: value });
+  };
 
+  renderContacts() {
+    const { filter, contacts } = this.state;
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase())
+    );
+  }
+
+  handelDelete = id => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== id),
+    }));
+  };
+
+  render() {
+    const { filter } = this.state;
+
+    return (
+      <>
+        <ContactForm onSubmit={this.handleSubmit} />
+
+        <p>Contacts</p>
+        <Filter filter={filter} onChange={this.handelFilterInput} />
+        <ContactsList
+          contacts={this.renderContacts()}
+          onDelete={this.handelDelete}
+        />
+      </>
+    );
   }
 }
