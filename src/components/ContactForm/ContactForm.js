@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-
+import PropTypes from "prop-types";
+import { FormWrapper,
+  FormDiv,
+  FormLabel,
+  FormText,
+  FormBtn,
+  FormInput,
+} from './ContactForm.styled'
 class ContactForm extends Component {
   state = {
     name: '',
@@ -18,12 +25,13 @@ class ContactForm extends Component {
     const { name, number } = this.state;
    
     return (
-      <>
+      
+      <FormWrapper>
         <form onSubmit={this.handleSubmit}>
-          <div>
-            <label htmlFor="name">
-              <p>Name</p>
-              <input
+          <FormDiv>
+            <FormLabel htmlFor="name">
+              <FormText>Name</FormText>
+              <FormInput
                 id="name"
                 type="text"
                 name="name"
@@ -33,12 +41,12 @@ class ContactForm extends Component {
                 required
                 onChange={this.handleChange}
               />
-            </label>
-          </div>
-          <div>
-            <label htmlFor="number">
-              <p> Number</p>
-              <input
+            </FormLabel>
+          </FormDiv>
+          <FormDiv>
+            <FormLabel htmlFor="number">
+              <FormText> Number</FormText>
+              <FormInput
                 id="number"
                 type="tel"
                 name="number"
@@ -48,12 +56,20 @@ class ContactForm extends Component {
                 required
                 onChange={this.handleChange}
               />
-            </label>
-          </div>
-          <button type="submit">Add contact</button>
+            </FormLabel>
+          </FormDiv>
+          <FormBtn type="submit">Add contact</FormBtn>
         </form>
-      </>
+      </FormWrapper>
     );
   }
 }
 export default ContactForm;
+
+ContactForm.propTypes = {
+  name: PropTypes.string,
+  number: PropTypes.string,
+  handleChange: PropTypes.func,
+  handleSubmit: PropTypes.func,
+  
+};
